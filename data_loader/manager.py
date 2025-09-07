@@ -25,7 +25,7 @@ class Manager:
     def create_meta_data(self, file : Path):
         meta_data = {'name' : file.name,
                      'size' : file.stat().st_size,
-                     'data_time' : time.ctime(file.stat().st_mtime)}
+                     'data_time' : time.ctime(file.stat().st_ctime)}
 
         return meta_data
 
