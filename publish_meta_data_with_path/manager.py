@@ -1,18 +1,21 @@
 import time
 from pathlib import Path
+
+from kafka.benchmarks.load_example import Producer
+
 from utils.kafka_configuration import produce_message, send_event
 
 class Manager:
     def __init__(self):
         self.directory_files_path = 'C:/podcasts'
+        self.path = Path(self.directory_files_path)
+        self.producer = produce_message()
+        self.topic = 'path_meta-data'
 
     def run_files_and_publish_the_path_and_meta_data_to_kafka(self):
-        producer = produce_message()
-        topic = 'path_meta-data'
-        path = Path(self.directory_files_path)
-        for file in path.iterdir():
+        for file in self.path.iterdir():
             document = self.create_json_file_with_path_and_meta_data(file)
-            send_event(producer, topic, document)
+            send_event(self.producer, self.topic, document)
 
 
 
