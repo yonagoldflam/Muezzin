@@ -5,7 +5,7 @@ from sympy.physics.units import current
 
 
 class DataLoader:
-    def __init__(self, directory_files_path = 'C:/podcasts'):
+    def __init__(self, directory_files_path):
         self.directory_files_path = Path(directory_files_path)
 
     def meta_data(self):
@@ -21,8 +21,5 @@ class DataLoader:
             current_file['meta_data'] = meta_data
             all_files.append(current_file)
 
-        print(all_files)
+        return all_files
 
-if __name__ == '__main__':
-    l = DataLoader()
-    l.meta_data()
