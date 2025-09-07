@@ -1,4 +1,4 @@
-from convert_audo_to_text import Converter
+from convert_audio_to_text import Converter
 
 
 class Manager:
