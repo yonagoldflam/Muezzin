@@ -2,7 +2,7 @@ import json
 import os
 from kafka import KafkaProducer, KafkaConsumer
 
-kafka_broker = os.getenv('KAFKA_BROKER', 'kafka-broker:9092')
+kafka_broker = os.getenv('KAFKA_BROKER', 'localhost:9092')
 
 def produce_message():
     try:

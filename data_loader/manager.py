@@ -9,7 +9,15 @@ class Manager:
     def get_meta_data(self):
         return self.data_loader.meta_data()
 
+    def publish_message(self):
+        list_files = self.get_meta_data()
+        producer = produce_message()
+        topic = 'path_meta-data'
+        for document in list_files:
+            send_event(producer, topic, document)
+
+
 
 if __name__ == '__main__':
     m = Manager()
-    print(m.get_meta_data())
+    m.publish_message()
