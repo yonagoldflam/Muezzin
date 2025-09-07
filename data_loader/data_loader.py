@@ -12,7 +12,7 @@ class DataLoader:
         all_files = []
         for file in self.directory_files_path.iterdir():
 
-            current_file = {'file_path': f'{self.directory_files_path}/{file.name}'}
+            current_file = {'file_path': file}
             file_path = file.name
             meta_data = {}
             meta_data['name'] = file.name

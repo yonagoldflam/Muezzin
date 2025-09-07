@@ -1,6 +1,5 @@
-
 from data_loader import DataLoader
-
+from utils.kafka_configuration import produce_message, send_event
 
 class Manager:
     def __init__(self):
