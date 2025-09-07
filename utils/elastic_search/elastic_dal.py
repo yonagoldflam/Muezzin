@@ -6,12 +6,17 @@ class ElasticDal:
 
     def create_index(self, index_name):
         try:
-            self.client.indices.create(index=index_name)
+            if not self.client.indices.exists(index_name):
+                self.client.indices.create(index=index_name)
+
         except Exception as e:
             print(f'field to create index: {e}')
 
-    def insert_document(self,index, document, doc_id=None):
+    def insert_document(self,index, document, doc_id):
         try:
-            return self.client.index(index=index, body=document, id=doc_id)
+            if not self.client.exists(index, doc_id):
+                return self.client.index(index=index, body=document, id=doc_id)
+            else:
+                return 'id_document already exists'
         except Exception as e:
             print(f'field to insert {document} {e}')
