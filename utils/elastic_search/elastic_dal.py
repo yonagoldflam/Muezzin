@@ -10,8 +10,8 @@ class ElasticDal:
         except Exception as e:
             print(f'field to create index: {e}')
 
-    def insert_document(self,index, document):
+    def insert_document(self,index, document, doc_id=None):
         try:
-            return self.client.index(index=index, body=document)
+            return self.client.index(index=index, body=document, id=doc_id)
         except Exception as e:
             print(f'field to insert {document} {e}')
