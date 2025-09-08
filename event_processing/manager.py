@@ -30,6 +30,8 @@ class Manager:
         binary_audio_with_id = self.create_document_with_id_and_binary_audio_file(meta_data_hashed, file_path)
         if not self.mongo_db.find_one(collection_name=self.collection_name, query={'_id': meta_data_hashed}):
             self.mongo_db.insert_one(collection_name=self.collection_name, document=binary_audio_with_id)
+        else:
+            logger.info('insert document error: duplicate key error collection: muezzin_db.muezzin_podcasts index: _id_ dup key: { _id: "45ae742954cfb019dfdd0cc1147cdf3748121eabd482df5e275414ad82d04347" }')
 
     def create_document_with_id_and_binary_audio_file(self, doc_id, file_path):
         binary_audio = self.read_wav_file(file_path)

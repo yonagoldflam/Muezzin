@@ -1,6 +1,9 @@
 import os
 import pymongo
 from pymongo.errors import PyMongoError
+from utils.logging.logger import Logger
+
+logger = Logger().get_logger()
 
 class Connection:
     def __init__(self):
@@ -21,6 +24,8 @@ class Connection:
             )
 
             self.db = self.client[mongo_db]
+            logger.info(f'connected to mongo db: {mongo_db} successful')
 
         except PyMongoError as e:
-            raise RuntimeError(f'Error connecting to database mongoDB: {e}')
+            logger.info(f'failed to connect to mongo db with error: {e}')
+            raise RuntimeError
