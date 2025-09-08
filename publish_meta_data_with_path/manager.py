@@ -8,9 +8,10 @@ logger = Logger().get_logger()
 
 class Manager:
     def __init__(self):
-        logger.info('initializing manager')
+        logger.info('initializing publish meta data with path manager')
         self.directory_files_path = 'C:/podcasts'
         self.path = Path(self.directory_files_path)
+        logger.info(f'pathing: {self.path} successful')
         self.producer = produce_message()
         self.topic = 'path_meta-data'
 
