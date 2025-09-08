@@ -1,5 +1,4 @@
 from elasticsearch import Elasticsearch, helpers
-from requests import Response
 
 from utils.logging.logger import Logger
 
@@ -15,9 +14,7 @@ class ElasticDal:
         try:
             if not self.client.indices.exists(index=index_name):
                 response = self.client.indices.create(index=index_name)
-                if response['acknowledged']:
-                    logger.info(f'created index: {index_name} successful')
-                else:
+                if not response['acknowledged']:
                     logger.error(f'created index: {index_name} failed')
             else:
                 logger.error(f'index: {index_name} already exists')
@@ -29,9 +26,7 @@ class ElasticDal:
         try:
             if not self.client.exists(index=index, id=doc_id):
                 response = self.client.index(index=index, body=document, id=doc_id)
-                if response['result'] == 'created':
-                    logger.info(f'inserted to elastic document: {doc_id} successful')
-                else:
+                if not response['result'] == 'created':
                     logger.error(f'inserted to elastic document: {doc_id} failed')
             else:
                 logger.error(f'document {doc_id} already exists in index: {index}')
@@ -42,9 +37,7 @@ class ElasticDal:
         try:
             if self.client.indices.exists(index=index_name):
                 response = self.client.indices.delete(index=index_name)
-                if response['acknowledged']:
-                    logger.info(f'deleted index: {index_name} from elastic successful')
-                else:
+                if not response['acknowledged']:
                     logger.error(f'deleted index: {index_name} from elastic failed')
             else:
                 logger.error(f'index: {index_name} does not exist in elastic')

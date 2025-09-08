@@ -39,22 +39,24 @@ class Manager:
     def create_document_with_id_and_binary_audio_file(self, doc_id, file_path):
         binary_audio = self.read_wav_file(file_path)
         document_with_id_and_binary_audio_file = {'_id': doc_id, 'audio': binary_audio}
+        logger.info(f'created document with id and binary audio successful.')
         return document_with_id_and_binary_audio_file
 
 
     def create_hash(self, document):
         sort_document = json.dumps(document, sort_keys=True).encode('utf-8')
         hashed_document = hashlib.sha256(sort_document).hexdigest()
+        logger.info(f'hash successful. document: {document}')
         return hashed_document
 
-
-
-
-
-
     def read_wav_file(self, path):
-        with open(path, 'rb') as f:
-            return f.read()
+        try:
+            with open(path, 'rb') as f:
+                binary_audio_file = f.read()
+                logger.info(f'read audio file successful')
+                return binary_audio_file
+        except Exception as e:
+            logger.error(f'read audio file failed. with error: {e}')
 
 elastic_client = ElasticDal()
 if __name__ == '__main__':
