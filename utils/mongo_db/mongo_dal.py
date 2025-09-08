@@ -5,7 +5,6 @@ class MongoDal:
         self.connection = connection
 
     def insert_one(self, collection_name, document):
-
         self.connection.db[collection_name].insert_one(document)
 
     def insert_many(self, collection_name, documents):

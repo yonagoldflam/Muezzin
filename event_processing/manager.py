@@ -22,12 +22,12 @@ class Manager:
             document = message.value
             path_file = document['file_path']
             meta_data = document['meta_data']
-            hashed = self.create_hash(meta_data)
-            self.elastic_client.insert_document(self.index_name, meta_data ,hashed)
-            audio = self.read_wav_file(path_file)
-            doc = {'_id': hashed, 'audio': audio}
-            if not self.mongo_d.find_one(self.collection_name, {'_id': hashed}):
-                self.mongo_d.insert_one(self.collection_name, doc)
+            meta_data_hashed = self.create_hash(meta_data)
+            self.elastic_client.insert_document(index=self.index_name, document=meta_data, doc_id=meta_data_hashed)
+            binary_audio = self.read_wav_file(path_file)
+            binary_audio_with_id = {'_id': meta_data_hashed, 'audio': binary_audio}
+            if not self.mongo_d.find_one(collection_name=self.collection_name, query={'_id': meta_data_hashed}):
+                self.mongo_d.insert_one(collection_name=self.collection_name, document=binary_audio_with_id)
 
 
 
