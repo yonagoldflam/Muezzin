@@ -1,4 +1,4 @@
-from utils.kafka_configuration import consume_message
+from utils.kafka_configuration import consume_messages
 from utils.elastic_search.elastic_dal import ElasticDal
 from utils.mongo_db.mongo_connection import Connection
 from utils.mongo_db.mongo_dal import MongoDal
@@ -17,7 +17,7 @@ class Manager:
 
     def consume_hash_insert_to_elastic_and_mongo(self):
         topic = 'path_meta-data'
-        consumer = consume_message(topic)
+        consumer = consume_messages(topic)
         for event in consumer:
             self.splitter_event_to_meta_data_and_path_and_storaging(event)
 
@@ -47,8 +47,8 @@ class Manager:
         with open(path, 'rb') as f:
             return f.read()
 
-
+elastic_client = ElasticDal()
 if __name__ == '__main__':
     manager = Manager()
-    # manager.elastic_client.delete_index(index_name=manager.index_name)
+    elastic_client.delete_index(index_name='meta_data_podcasts')
     manager.consume_hash_insert_to_elastic_and_mongo()

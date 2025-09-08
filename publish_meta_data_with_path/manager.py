@@ -1,14 +1,17 @@
 import time
 from pathlib import Path
-
-from kafka.benchmarks.load_example import Producer
-
 from utils.kafka_configuration import produce_message, send_event
+from utils.logging.logger import Logger
+
+logger = Logger().get_logger()
+
 
 class Manager:
     def __init__(self):
+        logger.info('initializing publish meta data with path manager')
         self.directory_files_path = 'C:/podcasts'
         self.path = Path(self.directory_files_path)
+        logger.info(f'pathing: {self.path} successful')
         self.producer = produce_message()
         self.topic = 'path_meta-data'
 
@@ -19,10 +22,16 @@ class Manager:
 
 
 
-    def create_json_file_with_path_and_meta_data(self,file : Path):
+    def create_json_file_with_path_and_meta_data(self, file : Path):
         meta_data = self.create_meta_data(file)
         document = {'file_path': str(file),
                     'meta_data': meta_data}
+
+        if document['file_path'] and document['meta_data']:
+            logger.info(f'creating json file: {document} successful')
+        else:
+            logger.error(f'creating json file: {document} failed')
+
         return document
 
     def create_meta_data(self, file : Path):
@@ -30,11 +39,12 @@ class Manager:
                      'size' : file.stat().st_size,
                      'data_time' : time.ctime(file.stat().st_ctime)}
 
+        if meta_data['name'] and meta_data['size'] and meta_data['data_time']:
+            logger.info(f'creating meta data: {meta_data} successful')
+        else:
+            logger.error(f'creating meta data: {meta_data} failed')
+
         return meta_data
-
-
-
-
 
 if __name__ == '__main__':
     m = Manager()
