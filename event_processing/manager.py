@@ -5,7 +5,7 @@ from utils.mongo_db.mongo_dal import MongoDal
 import hashlib
 import json
 from utils.logging.logger import Logger
-from convert_audio_to_text import Transcriber
+from transcription_audio import Transcriber
 
 logger = Logger().get_logger()
 
