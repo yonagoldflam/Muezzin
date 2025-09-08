@@ -36,9 +36,9 @@ class Manager:
     def create_meta_data(self, file : Path):
         meta_data = {'name' : file.name,
                      'size' : file.stat().st_size,
-                     'data_time' : time.ctime(file.stat().st_ctime)}
+                     'date_time' : time.ctime(file.stat().st_ctime)}
 
-        if meta_data['name'] and meta_data['size'] and meta_data['data_time']:
+        if meta_data['name'] and meta_data['size'] and meta_data['date_time']:
             logger.info(f'creating meta data: {meta_data} successful')
         else:
             logger.error(f'creating meta data: {meta_data} failed')
