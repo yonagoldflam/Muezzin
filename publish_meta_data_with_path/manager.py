@@ -22,10 +22,16 @@ class Manager:
 
 
 
-    def create_json_file_with_path_and_meta_data(self,file : Path):
+    def create_json_file_with_path_and_meta_data(self, file : Path):
         meta_data = self.create_meta_data(file)
         document = {'file_path': str(file),
                     'meta_data': meta_data}
+
+        if document['file_path'] and document['meta_data']:
+            logger.info(f'creating json file: {document} successful')
+        else:
+            logger.error(f'creating json file: {document} failed')
+
         return document
 
     def create_meta_data(self, file : Path):
@@ -33,11 +39,12 @@ class Manager:
                      'size' : file.stat().st_size,
                      'data_time' : time.ctime(file.stat().st_ctime)}
 
+        if meta_data['name'] and meta_data['size'] and meta_data['data_time']:
+            logger.info(f'creating meta data: {meta_data} successful')
+        else:
+            logger.error(f'creating meta data: {meta_data} failed')
+
         return meta_data
-
-
-
-
 
 if __name__ == '__main__':
     m = Manager()
