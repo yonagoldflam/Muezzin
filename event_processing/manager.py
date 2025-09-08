@@ -47,8 +47,8 @@ class Manager:
         with open(path, 'rb') as f:
             return f.read()
 
-
+elastic_client = ElasticDal()
 if __name__ == '__main__':
     manager = Manager()
-    # manager.elastic_client.delete_index(index_name=manager.index_name)
+    elastic_client.delete_index(index_name='meta_data_podcasts')
     manager.consume_hash_insert_to_elastic_and_mongo()
