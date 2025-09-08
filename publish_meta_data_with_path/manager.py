@@ -1,12 +1,14 @@
 import time
 from pathlib import Path
-
-from kafka.benchmarks.load_example import Producer
-
 from utils.kafka_configuration import produce_message, send_event
+from utils.logging.logger import Logger
+
+logger = Logger().get_logger()
+
 
 class Manager:
     def __init__(self):
+        logger.info('initializing manager')
         self.directory_files_path = 'C:/podcasts'
         self.path = Path(self.directory_files_path)
         self.producer = produce_message()
