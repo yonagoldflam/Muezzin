@@ -4,9 +4,13 @@ from utils.mongo_db.mongo_connection import Connection
 from utils.mongo_db.mongo_dal import MongoDal
 import hashlib
 import json
+from utils.logging.logger import Logger
+
+logger = Logger().get_logger()
 
 class Manager:
     def __init__(self):
+        logger.info("'event processing' manager start")
         self.elastic_client = ElasticDal()
         self.index_name = 'meta_data_podcasts'
         self.elastic_client.create_index(self.index_name)
@@ -28,10 +32,9 @@ class Manager:
         meta_data_hashed = self.create_hash(meta_data)
         self.elastic_client.insert_document(index=self.index_name, document=meta_data, doc_id=meta_data_hashed)
         binary_audio_with_id = self.create_document_with_id_and_binary_audio_file(meta_data_hashed, file_path)
-        if not self.mongo_db.find_one(collection_name=self.collection_name, query={'_id': meta_data_hashed}):
-            self.mongo_db.insert_one(collection_name=self.collection_name, document=binary_audio_with_id)
-        else:
-            logger.info('insert document error: duplicate key error collection: muezzin_db.muezzin_podcasts index: _id_ dup key: { _id: "45ae742954cfb019dfdd0cc1147cdf3748121eabd482df5e275414ad82d04347" }')
+        if not self.mongo_db.check_id_is_exists(self.collection_name, meta_data_hashed):
+            self.mongo_db.insert_one(self.collection_name, binary_audio_with_id)
+
 
     def create_document_with_id_and_binary_audio_file(self, doc_id, file_path):
         binary_audio = self.read_wav_file(file_path)
@@ -43,6 +46,10 @@ class Manager:
         sort_document = json.dumps(document, sort_keys=True).encode('utf-8')
         hashed_document = hashlib.sha256(sort_document).hexdigest()
         return hashed_document
+
+
+
+
 
 
     def read_wav_file(self, path):
