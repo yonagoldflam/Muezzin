@@ -26,7 +26,8 @@ class Manager:
             self.elastic_client.insert_document(self.index_name, meta_data ,hashed)
             audio = self.read_wav_file(path_file)
             doc = {'_id': hashed, 'audio': audio}
-            self.mongo_d.insert_one(self.collection_name, doc)
+            if not self.mongo_d.find_one(self.collection_name, {'_id': hashed}):
+                self.mongo_d.insert_one(self.collection_name, doc)
 
 
 
@@ -43,4 +44,5 @@ class Manager:
 
 if __name__ == '__main__':
     manager = Manager()
+    manager.elastic_client.delete_index(index_name=manager.index_name)
     manager.consume_hash_and_insert_to_elastic()
