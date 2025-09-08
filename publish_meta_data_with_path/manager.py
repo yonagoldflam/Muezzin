@@ -31,7 +31,6 @@ class Manager:
             logger.info(f'creating json file: {document} successful')
         else:
             logger.error(f'creating json file: {document} failed')
-
         return document
 
     def create_meta_data(self, file : Path):

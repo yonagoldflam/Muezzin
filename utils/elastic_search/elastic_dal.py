@@ -1,5 +1,4 @@
 from elasticsearch import Elasticsearch, helpers
-from requests import Response
 
 from utils.logging.logger import Logger
 
@@ -14,11 +13,8 @@ class ElasticDal:
     def create_index(self, index_name):
         try:
             if not self.client.indices.exists(index=index_name):
-                print('create index')
                 response = self.client.indices.create(index=index_name)
-                if response['acknowledged']:
-                    logger.info(f'created index: {index_name} successful')
-                else:
+                if not response['acknowledged']:
                     logger.error(f'created index: {index_name} failed')
             else:
                 logger.error(f'index: {index_name} already exists')
@@ -30,24 +26,20 @@ class ElasticDal:
         try:
             if not self.client.exists(index=index, id=doc_id):
                 response = self.client.index(index=index, body=document, id=doc_id)
-                if response['result'] == 'created':
-                    logger.info(f'inserted document: {doc_id} successful')
-                else:
-                    logger.error(f'inserted document: {doc_id} failed')
+                if not response['result'] == 'created':
+                    logger.error(f'inserted to elastic document: {doc_id} failed')
             else:
-                logger.error(f'document {doc_id} already exists')
+                logger.error(f'document {doc_id} already exists in index: {index}')
         except Exception as e:
-            logger.error(f'field to insert {document} {e}')
+            logger.error(f'field insert to elastic document: {document} with error: {e}')
 
     def delete_index(self, index_name):
         try:
             if self.client.indices.exists(index=index_name):
                 response = self.client.indices.delete(index=index_name)
-                if response['acknowledged']:
-                    logger.info(f'deleted index: {index_name} successful')
-                else:
-                    logger.error(f'deleted index: {index_name} failed')
+                if not response['acknowledged']:
+                    logger.error(f'deleted index: {index_name} from elastic failed')
             else:
-                logger.error(f'index: {index_name} does not exist')
+                logger.error(f'index: {index_name} does not exist in elastic')
         except Exception as e:
-            logger.error(f'field to delete index: {e}')
+            logger.error(f'field to delete index from elastic with error: {e}')
