@@ -23,8 +23,8 @@ class BDSTextClassification:
             return none_threat_field
     @staticmethod
     def is_bds(score):
-        is_bds_field = {'is_bds': 'True'}
-        not_bds_field = {'is_bds': 'False'}
+        is_bds_field = {'is_bds': True}
+        not_bds_field = {'is_bds': False}
         if score:
             if score < 100:
                 return is_bds_field
