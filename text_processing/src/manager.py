@@ -1,6 +1,6 @@
 from utils.elastic_search.elastic_dal import ElasticDal
 from text_decoding import TextDecoding
-from utils.kafka_configuration import consume_messages
+from utils.kafka_configuration.kafka_configuration import consume_messages
 from utils.logging.logger import Logger
 
 logger = Logger().get_logger()
