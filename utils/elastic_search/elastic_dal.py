@@ -1,12 +1,14 @@
 from elasticsearch import Elasticsearch, helpers
+import os
 
 from utils.logging.logger import Logger
 
 logger = Logger().get_logger()
 
 class ElasticDal:
-    def __init__(self, host="localhost", port=9200):
-        self.client = Elasticsearch(hosts=[f'http://{host}:{port}'])
+    def __init__(self, host="elastic", port=9200):
+        self.host = os.getenv('ELASTIC_HOST',  f'http://{host}:{port}')
+        self.client = Elasticsearch(hosts=[self.host])
         logger.info('connected to elasticsearch')
 
 

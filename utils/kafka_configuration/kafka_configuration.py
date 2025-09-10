@@ -5,7 +5,7 @@ from utils.logging.logger import Logger
 
 logger = Logger().get_logger()
 
-kafka_broker = os.getenv('KAFKA_BROKER', 'localhost:9092')
+kafka_broker = os.getenv('KAFKA_BROKER', 'kafka:9092')
 
 def produce_message():
     try:

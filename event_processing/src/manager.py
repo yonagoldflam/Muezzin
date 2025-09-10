@@ -1,11 +1,11 @@
-from utils.kafka_configuration import *
+from utils.kafka_configuration.kafka_configuration import *
 from utils.elastic_search.elastic_dal import ElasticDal
 from utils.mongo_db.mongo_connection import Connection
 from utils.mongo_db.mongo_dal import MongoDal
 import hashlib
 import json
 from utils.logging.logger import Logger
-from transcription_audio import Transcriber
+from event_processing.src.transcription_audio import Transcriber
 
 logger = Logger().get_logger()
 
@@ -78,5 +78,5 @@ class Manager:
 elastic_client = ElasticDal()
 if __name__ == '__main__':
     manager = Manager()
-    elastic_client.delete_index(index_name='meta_data_podcasts')
+    elastic_client.delete_index(index_name='muezzin_podcasts')
     manager.consume_hash_insert_to_elastic_and_mongo()
