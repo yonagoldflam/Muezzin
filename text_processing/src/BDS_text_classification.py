@@ -26,7 +26,7 @@ class BDSTextClassification:
         is_bds_field = {'is_bds': 'True'}
         not_bds_field = {'is_bds': 'False'}
         if score:
-            if score < 60:
+            if score < 100:
                 return is_bds_field
             else:
                 return not_bds_field
