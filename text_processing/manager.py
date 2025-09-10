@@ -1,8 +1,9 @@
-from sympy.polys.subresultants_qq_zz import final_touches
-
 from utils.elastic_search.elastic_dal import ElasticDal
 from text_decoding import TextDecoding
 from utils.kafka_configuration import consume_messages
+from utils.logging.logger import Logger
+
+logger = Logger().get_logger()
 
 class Manager:
     def __init__(self):
@@ -14,6 +15,7 @@ class Manager:
         self.elastic_client = ElasticDal()
         self.index = 'muezzin_podcasts'
 
+
     def decode(self, encoded_string):
         decoded_string = self.text_decoding.decode_base64(encoded_string)
         decoded_list = decoded_string.lower().split(',')
@@ -23,27 +25,34 @@ class Manager:
         topic = 'muezzin_text'
         consumer = consume_messages(topic)
         for event in consumer:
-            score = 0
             document = event.value
-            text = document['text']
-            for hostile in self.hostile_decoding_list:
-                score += text.count(hostile) * 2
-            for not_hostile in self.not_hostile_decoding_list:
-                score += text.count(not_hostile)
-            if score:
-                final_score = len(text) / score
-            else:
-                final_score = 0
-            if final_score > 60:
-                new_field = {'is_bds': 'True'}
-            else:
-                new_field = {'is_bds': 'False'}
+            text = document['text'].lower()
+            score = self.calculate_hostile_score(text)
+            bds_field = self.is_bds(text,score)
             doc_id = document['id']
-            self.elastic_client.add_field_to_document(self.index, doc_id, new_field)
+            self.elastic_client.add_field_to_document(self.index, doc_id, bds_field)
+            logger.info(f'field {bds_field} added to doc id:{doc_id} in elastic')
 
 
+    def calculate_hostile_score(self, text):
+        score = 0
+        for hostile in self.hostile_decoding_list:
+            score += text.count(hostile) * 2
+        for not_hostile in self.not_hostile_decoding_list:
+            score += text.count(not_hostile)
+        return score
 
-
+    def is_bds(self, text, score):
+        is_bds_field = {'is_bds': 'True'}
+        not_bds_field = {'is_bds': 'False'}
+        if score:
+            final_score = len(text) / score
+        else:
+            return not_bds_field
+        if final_score < 60:
+            return is_bds_field
+        else:
+            return not_bds_field
 
 
 if __name__ == '__main__':
