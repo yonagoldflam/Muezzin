@@ -104,3 +104,18 @@ services:
     depends_on:
       - kafka
       - elastic
+
+  end_points:
+    build:
+      context: .
+      dockerfile: end_points/Dockerfile
+    container_name: end_points
+    environment:
+      KAFKA_BROKER: kafka:9092
+      ELASTIC_HOST: 'http://elastic:9200'
+    ports:
+      - "8003:8003"
+    depends_on:
+      - kafka
+      - elastic
+      - text_processing

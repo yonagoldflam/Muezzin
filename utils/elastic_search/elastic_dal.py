@@ -6,7 +6,7 @@ from utils.logging.logger import Logger
 logger = Logger().get_logger()
 
 class ElasticDal:
-    def __init__(self, host="elastic", port=9200):
+    def __init__(self, host="localhost", port=9200):
         self.host = os.getenv('ELASTIC_HOST',  f'http://{host}:{port}')
         self.client = Elasticsearch(hosts=[self.host])
         logger.info('connected to elasticsearch')
@@ -54,4 +54,25 @@ class ElasticDal:
                 logger.error(f'document {doc_id} does not exist in index')
         except Exception as e:
             logger.error(f'field update to elastic with error: {e}')
+
+    def search(self, index, query):
+        try:
+            res = self.client.search(index=index,body=query)
+            return [hit["_source"] for hit in res["hits"]["hits"]]
+        except Exception as e:
+            logger.error(f'field search to elastic with error: {e}')
+            return []
+
+# e = ElasticDal()
+# query_body = {
+#     "query": {
+#         "match": {
+#             'is_bds': True
+#         }
+#     }
+# }
+#
+# a = e.search('muezzin_podcasts',query_body)
+# print(len(a))
+
 
