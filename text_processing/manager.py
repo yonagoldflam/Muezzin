@@ -26,12 +26,22 @@ class Manager:
         consumer = consume_messages(topic)
         for event in consumer:
             document = event.value
+            doc_id = document['id']
             text = document['text'].lower()
             score = self.calculate_hostile_score(text)
-            bds_field = self.is_bds(text,score)
-            doc_id = document['id']
-            self.elastic_client.add_field_to_document(self.index, doc_id, bds_field)
-            logger.info(f'field {bds_field} added to doc id:{doc_id} in elastic')
+            self.add_bds_field_to_document(doc_id, score)
+            self.add_threat_level_field(doc_id, score)
+
+
+    def add_bds_field_to_document(self, doc_id,score):
+        bds_field = self.is_bds(score)
+        self.elastic_client.add_field_to_document(self.index, doc_id, bds_field)
+        logger.info(f'field {bds_field} added to doc id:{doc_id} in elastic')
+
+    def add_threat_level_field(self, doc_id, score):
+        threat_level_field = self.threat_level_field(score)
+        self.elastic_client.add_field_to_document(self.index, doc_id, threat_level_field)
+        logger.info(f'field {threat_level_field} added to doc id:{doc_id} in elastic')
 
 
     def calculate_hostile_score(self, text):
@@ -40,20 +50,30 @@ class Manager:
             score += text.count(hostile) * 2
         for not_hostile in self.not_hostile_decoding_list:
             score += text.count(not_hostile)
-        return score
+        if score:
+            return len(text) / score
+        return 0
 
-    def is_bds(self, text, score):
+    def is_bds(self, score):
         is_bds_field = {'is_bds': 'True'}
         not_bds_field = {'is_bds': 'False'}
         if score:
-            final_score = len(text) / score
-        else:
-            return not_bds_field
-        if final_score < 60:
-            return is_bds_field
-        else:
-            return not_bds_field
+            if score < 60:
+                return is_bds_field
+            else:
+                return not_bds_field
+        return not_bds_field
 
+    def threat_level_field(self, score):
+        high_threat_field = {'bds_threat_level': 'high'}
+        medium_threat_field = {'bds_threat_level': 'medium'}
+        none_threat_field = {'bds_threat_level': 'none'}
+        if score < 40:
+            return high_threat_field
+        elif score < 100:
+            return medium_threat_field
+        else:
+            return none_threat_field
 
 if __name__ == '__main__':
     manager = Manager()
