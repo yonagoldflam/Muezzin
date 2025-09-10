@@ -1,6 +1,6 @@
 import time
 from pathlib import Path
-from utils.kafka_configuration import produce_message, send_event
+from utils.kafka_configuration.kafka_configuration import produce_message, send_event
 from utils.logging.logger import Logger
 
 logger = Logger().get_logger()
@@ -9,7 +9,7 @@ logger = Logger().get_logger()
 class Manager:
     def __init__(self):
         logger.info('initializing publish meta data with path manager')
-        self.directory_files_path = 'C:/podcasts'
+        self.directory_files_path = '/app/podcasts'
         self.path = Path(self.directory_files_path)
         logger.info(f'pathing: {self.path} successful')
         self.producer = produce_message()
