@@ -43,3 +43,13 @@ class ElasticDal:
                 logger.error(f'index: {index_name} does not exist in elastic')
         except Exception as e:
             logger.error(f'field to delete index from elastic with error: {e}')
+
+    def add_field_to_document(self, index, doc_id, new_field):
+        try:
+            if self.client.exists(index=index, id=doc_id):
+                self.client.update(index=index, doc=new_field, id=doc_id)
+            else:
+                logger.error(f'document {doc_id} does not exist in index')
+        except Exception as e:
+            logger.error(f'field update to elastic with error: {e}')
+
