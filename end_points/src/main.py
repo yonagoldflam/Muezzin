@@ -25,5 +25,41 @@ def get_all_soldiers():
             'match_all': {}
         }
     }
-    bds_supporters_list = elastic_client.search(index=index_name, query=query)
-    return bds_supporters_list
+    podcasts_list = elastic_client.search(index=index_name, query=query)
+    return podcasts_list
+
+@app.get("/high")
+def get_all_high():
+    query = {
+        'query': {
+            'match': {
+                'bds_threat_level': 'high'
+            }
+        }
+    }
+    bds_list = elastic_client.search(index=index_name, query=query)
+    return bds_list
+
+@app.get("/medium")
+def get_all_high():
+    query = {
+        'query': {
+            'match': {
+                'bds_threat_level': 'medium'
+            }
+        }
+    }
+    bds_list = elastic_client.search(index=index_name, query=query)
+    return bds_list
+
+@app.get("/none")
+def get_all_high():
+    query = {
+        'query': {
+            'match': {
+                'bds_threat_level': 'none'
+            }
+        }
+    }
+    bds_list = elastic_client.search(index=index_name, query=query)
+    return bds_list

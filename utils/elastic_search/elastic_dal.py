@@ -63,16 +63,4 @@ class ElasticDal:
             logger.error(f'field search to elastic with error: {e}')
             return []
 
-# e = ElasticDal()
-# query_body = {
-#     "query": {
-#         "match": {
-#             'is_bds': True
-#         }
-#     }
-# }
-#
-# a = e.search('muezzin_podcasts',query_body)
-# print(len(a))
-
 

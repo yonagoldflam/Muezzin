@@ -46,3 +46,10 @@ class MongoDal:
         except Exception as e:
             logger.error(f'find all documents in mongo error with: {e}')
 
+    def find_by_id(self, collection_name, doc_id):
+        try:
+            return self.connection.db[collection_name].find_one({"_id": doc_id})
+        except Exception as e:
+            logger.error(f'find document id in mongo error with: {e}')
+
+
