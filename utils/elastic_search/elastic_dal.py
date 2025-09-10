@@ -43,3 +43,15 @@ class ElasticDal:
                 logger.error(f'index: {index_name} does not exist in elastic')
         except Exception as e:
             logger.error(f'field to delete index from elastic with error: {e}')
+
+    def search(self, index: str, query: dict, size: int = 10):
+        res = self.client.search(index=index, query=query, size=size)
+        return [hit["_source"] for hit in res["hits"]["hits"]]
+
+    def search_phrase(self, index: str, field: str, phrase: str, size: int = 10, exact: bool = False):
+        search_field = f"{field}.keyword" if exact else field
+        query = {
+            "match_phrase" if not exact else "term":
+                {search_field: phrase}
+        }
+        return self.search(index=index, query=query, size=size)

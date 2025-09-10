@@ -1,4 +1,4 @@
-from utils.kafka_configuration import consume_messages
+from utils.kafka_configuration import *
 from utils.elastic_search.elastic_dal import ElasticDal
 from utils.mongo_db.mongo_connection import Connection
 from utils.mongo_db.mongo_dal import MongoDal
@@ -25,6 +25,7 @@ class Manager:
         self.language = 'en'
         self.converter = Transcriber(model_name=self.model_name, device=self.device,
                                      computer_type=self.computer_type, language=self.language)
+        self.producer = produce_message()
 
 
     def consume_hash_insert_to_elastic_and_mongo(self):
@@ -32,6 +33,7 @@ class Manager:
         consumer = consume_messages(topic)
         for event in consumer:
             self.splitter_event_to_meta_data_and_path_and_storaging(event)
+
 
     def splitter_event_to_meta_data_and_path_and_storaging(self, event):
         document = event.value
@@ -43,10 +45,13 @@ class Manager:
         if not self.mongo_db.check_id_is_exists(self.collection_name, meta_data_hashed):
             self.mongo_db.insert_one(self.collection_name, binary_audio_with_id)
 
+
     def build_podcast_document_transcription_insert_elastic(self, meta_data, doc_id, file_path):
         text = self.converter.transcribe(file_path)
         meta_data['text'] = text
         self.elastic_client.insert_document(index=self.index_name, document=meta_data, doc_id=doc_id)
+        event = {'id': doc_id, 'text': text}
+        send_event(self.producer, 'muezzin_text', event)
 
     def create_document_with_id_and_binary_audio_file(self, doc_id, file_path):
         binary_audio = self.read_wav_file(file_path)
