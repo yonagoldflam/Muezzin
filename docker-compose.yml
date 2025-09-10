@@ -88,4 +88,19 @@ services:
     volumes:
       - C:/podcasts:/app/podcasts
     depends_on:
+      - kafka
+      - elastic
+
+  text_processing:
+    build:
+      context: .
+      dockerfile: text_processing/Dockerfile
+    container_name: text_processing
+    environment:
+      KAFKA_BROKER: kafka:9092
+      ELASTIC_HOST: 'http://elastic:9200'
+    ports:
+      - "8002:8002"
+    depends_on:
+      - kafka
       - elastic

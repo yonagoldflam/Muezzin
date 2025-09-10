@@ -7,3 +7,5 @@ class TextDecoding:
         encoded_bytes = encoded_string.encode('ascii')
         decoded_string = base64.b64decode(encoded_bytes).decode('utf-8')
         return decoded_string
+
+
