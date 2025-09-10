@@ -5,5 +5,8 @@
 #     def check_substring_in_string(self, string, substring):
 #         return substring in string
 
-a = 'azx vf azx vf'
-print(a.count('azx vf') * 2)
+a = 6 / 0
+if a > 60:
+    print('v')
+else:
+    print('n')

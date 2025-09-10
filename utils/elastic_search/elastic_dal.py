@@ -44,14 +44,12 @@ class ElasticDal:
         except Exception as e:
             logger.error(f'field to delete index from elastic with error: {e}')
 
-    def search(self, index: str, query: dict, size: int = 10):
-        res = self.client.search(index=index, query=query, size=size)
-        return [hit["_source"] for hit in res["hits"]["hits"]]
+    def add_field_to_document(self, index, doc_id, new_field):
+        try:
+            if self.client.exists(index=index, id=doc_id):
+                self.client.update(index=index, doc=new_field, id=doc_id)
+            else:
+                logger.error(f'document {doc_id} does not exist in index')
+        except Exception as e:
+            logger.error(f'field update to elastic with error: {e}')
 
-    def search_phrase(self, index: str, field: str, phrase: str, size: int = 10, exact: bool = False):
-        search_field = f"{field}.keyword" if exact else field
-        query = {
-            "match_phrase" if not exact else "term":
-                {search_field: phrase}
-        }
-        return self.search(index=index, query=query, size=size)
