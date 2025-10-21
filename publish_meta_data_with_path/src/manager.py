@@ -2,11 +2,16 @@ import time
 from pathlib import Path
 from utils.kafka_configuration.kafka_configuration import produce_message, send_event
 from utils.logging.logger import Logger
+from typing import Union
 
 logger = Logger().get_logger()
 
 
 class Manager:
+    directory_files_path: str
+    path: Path
+    topic: str
+
     def __init__(self):
         logger.info('initializing publish meta data with path manager')
         self.directory_files_path = '/app/podcasts'
@@ -15,16 +20,16 @@ class Manager:
         self.producer = produce_message()
         self.topic = 'path_meta-data'
 
-    def run_files_and_publish_the_path_and_meta_data_to_kafka(self):
+    def run_files_and_publish_the_path_and_meta_data_to_kafka(self) -> None:
         for file in self.path.iterdir():
-            document = self.create_json_file_with_path_and_meta_data(file)
+            document: dict[str, Union[str, dict[str, str]]] = self.create_json_file_with_path_and_meta_data(file)
             send_event(self.producer, self.topic, document)
 
 
 
-    def create_json_file_with_path_and_meta_data(self, file : Path):
-        meta_data = self.create_meta_data(file)
-        document = {'file_path': str(file),
+    def create_json_file_with_path_and_meta_data(self, file : Path) -> dict[str, Union[str, dict[str, str]]]:
+        meta_data: dict[str,str] = self.create_meta_data(file)
+        document: dict[str, Union[str, dict[str, str]]] = {'file_path': str(file),
                     'meta_data': meta_data}
 
         if document['file_path'] and document['meta_data']:
@@ -33,8 +38,8 @@ class Manager:
             logger.error(f'creating json file: {document} failed')
         return document
 
-    def create_meta_data(self, file : Path):
-        meta_data = {'name' : file.name,
+    def create_meta_data(self, file : Path) -> dict[str, str]:
+        meta_data: dict[str,str] = {'name' : file.name,
                      'size' : file.stat().st_size,
                      'date_time' : time.ctime(file.stat().st_ctime)}
 

@@ -17,9 +17,9 @@ class Manager:
         self.index = 'muezzin_podcasts'
 
 
-    def decode(self, encoded_string):
-        decoded_string = self.text_decoding.decode_base64(encoded_string)
-        decoded_list = decoded_string.lower().split(',')
+    def decode(self, encoded_string: str) -> list[str]:
+        decoded_string: str = self.text_decoding.decode_base64(encoded_string)
+        decoded_list: list[str] = decoded_string.lower().split(',')
         return decoded_list
 
     def main(self):
