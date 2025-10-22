@@ -7,7 +7,7 @@ logger = Logger().get_logger()
 
 kafka_broker = os.getenv('KAFKA_BROKER', 'kafka:9092')
 
-def produce_message():
+def produce_message() -> KafkaProducer:
     try:
         produce = KafkaProducer(bootstrap_servers=[kafka_broker],
                                  value_serializer=lambda v: json.dumps(v).encode('utf-8'))

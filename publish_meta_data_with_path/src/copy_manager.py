@@ -1,33 +1,34 @@
 import time
 from pathlib import Path
-from kafka import KafkaProducer
-from utils.kafka_configuration.kafka_configuration import produce_message, send_event
-from utils.logging.logger import Logger
+# from utils.kafka_configuration.kafka_configuration import produce_message, send_event
+# from utils.logging.logger import Logger
 from typing import Union, TypeAlias
 
-logger = Logger().get_logger()
+import logging
+
+logger = logging
+# logger = Logger().get_logger()
 
 MetaData: TypeAlias = dict[str, Union[str, float]]
 Document: TypeAlias = dict[str, Union[str, dict[str, Union[str, float]]]]
-
 class Manager:
     directory_files_path: str
     path: Path
-    producer: KafkaProducer
     topic: str
 
-    def __init__(self) -> None:
+    def __init__(self):
         logger.info('initializing publish meta data with path manager')
-        self.directory_files_path = '/app/podcasts'
+        self.directory_files_path = 'C:/podcasts'
         self.path = Path(self.directory_files_path)
         logger.info(f'pathing: {self.path} successful')
-        self.producer = produce_message()
+        # self.producer = produce_message()
         self.topic = 'path_meta-data'
 
     def run_files_and_publish_the_path_and_meta_data_to_kafka(self) -> None:
         for file in self.path.iterdir():
-            document: Document = self.create_json_file_with_path_and_meta_data(file)
-            send_event(self.producer, self.topic, document)
+            document: dict[str, Union[str, dict[str, str]]] = self.create_json_file_with_path_and_meta_data(file)
+            print(document)
+            # send_event(self.producer, self.topic, document)
 
 
 
@@ -43,6 +44,7 @@ class Manager:
         return document
 
     def create_meta_data(self, file : Path) -> MetaData:
+        # print(type(file.stat().st_ctime))
         meta_data: MetaData = {'name' : file.name,
                      'size' : file.stat().st_size,
                      'date_time' : time.ctime(file.stat().st_ctime)}
